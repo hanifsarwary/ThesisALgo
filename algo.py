@@ -28,7 +28,11 @@ class Node:
 	#### baqi setter bna lai python ma zaroorat ni hoti pr clarity k liye acha hota ha
 	####
 
-
+def root(node_dict):
+	for node in node_dict.values():
+		if node.parent_name == None:
+			print("I'm root node")
+			return node
 with open("input.txt", "r") as file:
 	FeatureNames = []
 	Mendatory = []
@@ -126,24 +130,32 @@ with open("input.txt", "r") as file:
 				for item in sub_line_parts:
 					parent_child = item.split(':')
 					PC[parent_child[0]] = parent_child[1].split(',')
-				#for i in range(0,len(PC)-1):
-				#	key = PC[i]
+				for name in FeatureNames:
+					for key in PC.keys():
+						if name in PC[key]:
+							parent_node = node_dict.get(name)
+							if parent_node is not None:
+								parent_node.parent_name = key
+						child_node = node_dict.get(key)
+						if child_node is not None:
+							child_node.children = PC[key]
+				"""
 				for keys in PC.keys():
 					for key in PC.keys():
 						if keys in PC[key]:
-							print(keys + ' My parent is ' + key)
-							parent_node = node_dict.ge(keys)
+							#print(keys + ' My parent is ' + key)
+							parent_node = node_dict.get(keys)
 							if parent_node is not None:
 								parent_node.parent_name = key
-						child_node = node_dict.ge(key)
+						child_node = node_dict.get(key)
 						if child_node is not None:
 							child_node.children = PC[key]
-
-
+				"""
 			except:
 				parent_child = line_parts[1].split(':')
 				PC[parent_child[0]] = parent_child[1].split(',')
+			test_root = root(node_dict)
+			print(test_root.name,test_root.children)
 
-			#print(PC)
 
 

@@ -3,5 +3,5 @@ Mendatory->Calls,Screen
 Alternative->Basic,Colour,High Resolution:Calls,GPS,Screen
 OR-> Camera,MP3:High Resolution,Screen
 inclusive->Camera,High Resolution:Phone,Calls
-exclusive->GPS:Basic
+exclusive->GPS,Basic
 PC->Mobile Phone:Calls,GPS,Screen,Media;Screen:Basic,Colour,High Resolution;Media:Camera, MP3
