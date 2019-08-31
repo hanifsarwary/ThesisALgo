@@ -1,5 +1,5 @@
 Feature Names->Mobile Phone,Calls,GPS,Screen,Media,Basic,Colour,High Resolution,Camera, MP3
 Mendatory->Calls,Screen
-Alternative->Basic,Colour,High Resolution:Calls,GPS,Screen
-OR-> Camera,MP3:High Resolution,Screen
+Alternative->Basic,Colour,High Resolution
+OR->Camera,MP3
 PC->Mobile Phone:Calls,GPS,Screen,Media;Screen:Basic,Colour,High Resolution;Media:Camera, MP3

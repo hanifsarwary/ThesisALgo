@@ -1,12 +1,14 @@
 from Node import Node
 import numpy as np
+import itertools
 
 def check_type(node):
-	if node.is_mendatory == True:
+	if node.is_mendatory:
 		return 1
-	elif node.is_alternative == True:
+	elif node.is_alternative:
 		return 2
-	elif node.is_or == True:	
+	elif node.is_or:
+		print("in or")
 		return 3
 	else:
 		return 4
@@ -16,62 +18,74 @@ def multiply_solutions(arr1, arr):
 
 	if arr1:
 		for a in arr1:
-			if type(a) is list:
-				for i in a:
-					if i == 0:
-						arr.append([0] * len(arr[0]))
+			if a == 0:
+				if type(arr[0]) is list:
+					arr.append([0]*len(arr[0]))
+				else:
+					arr.append([0] * len(arr))
 	return arr
 
-
 def group_combi(group_root, PCR, solution_array,n):
-	
+
 	if group_root.children == None:
+		if PCR == 1:
+			possible = multiply_solutions(solution_array, [1])
+
+			return possible
 		if PCR == 2:
-			possible = [1]*len(group_root.children)
+			possible = [1]*len(group_root.parent.children)
 			possible = np.array(possible)
 			possible = np.diag(possible)
-			possible = multiply_solutions(possible, solution_array)
+			possible = possible.tolist()
+			possible = multiply_solutions(solution_array, possible)
 			return possible
 		elif PCR == 3:
-			possible = [1] * len(group_root.children)
+			possible = [1] * len(group_root.parent.children)
 			possible = np.array(possible)
 			possible = np.diag(possible)
-			possible.append(np.array([1] * len(group_root.children)))
-			possible = multiply_solutions(possible, solution_array)
+			possible = possible.tolist()
+			possible.append(([1] * len(group_root.parent.children)))
+			possible = multiply_solutions(solution_array, possible)
 			return possible
 
 		elif PCR == 4:
-			possible = multiply_solutions([0,1], solution_array)
+			possible = multiply_solutions(solution_array, [0,1])
 			return possible
 	else:
+		if PCR == 1:
+			possible = multiply_solutions(solution_array, [1])
+			return group_combi(group_root.children[n], check_type(group_root.children[n]), possible, 0)
 		if PCR == 2:
+			possible = [1]*len(group_root.children)
+
+			possible = np.array(possible)
+			possible = np.diag(possible)
+			possible = possible.tolist()
+			possible = multiply_solutions(solution_array, possible)
+			return group_combi(group_root.children[n], check_type(group_root.children[n]), possible, 0)
+		if PCR == 3:
 			possible = [1]*len(group_root.children)
 			possible = np.array(possible)
 			possible = np.diag(possible)
-			possible = multiply_solutions(possible, solution_array)
-			group_combi(group_root, check_type(group_root), possible, 0)
-		if PCR == 3:
-				possible = [1]*len(group_root.children)
-				possible = np.array(possible)
-				possible = np.diag(possible)
-				possible.append(np.array([1]*len(group_root.children)))
-				possible = multiply_solutions(possible, solution_array)
-				group_combi(group_root, check_type(group_root), possible, 0)
+			possible = possible.tolist()
+			possible.append(([1]*len(group_root.children)))
+			possible = multiply_solutions(solution_array, possible)
+			return group_combi(group_root.children[0], check_type(group_root.children[n]), possible, 0)
 		elif PCR == 4:
-			possible = multiply_solutions([0,1], solution_array)
-			group_combi(group_root, check_type(group_root), possible, 0)
+			possible = multiply_solutions(solution_array,[0,1])
+			return group_combi(group_root.children[0], check_type(group_root.children[n]), possible, 0)
 
 
-def  product_combination(root):
+def product_combination(root):
 	group_products = []
 	for child in root.children:
 		group_products.append(group_combi(child, check_type(child), None, 0))
-
+	for t in itertools.product(*group_products):
+		print(t)
 
 def root(node_dict):
 	for node in node_dict.values():
-		if node.parent_name == None:
-			print("I'm root node")
+		if node.parent == None:
 			return node
 
 with open("input.txt", "r") as file:
@@ -103,41 +117,36 @@ with open("input.txt", "r") as file:
 					node.is_mendatory =  True
 
 		elif line_parts[0] == "Alternative":
+
 			line_parts[1] = (line_parts[1][:-1])
 			Alternative = line_parts[1].split(',')
 			for item in Alternative:
 				node = node_dict.get(item)
 				if node is not None:
-					node.set_is_alternative =  True
+					node.is_alternative =  True
 		elif line_parts[0] == "OR":
 			line_parts[1] = (line_parts[1][:-1])
 			OR_array = line_parts[1].split(',')
+			print(OR_array)
 			for item in OR_array:
 				node = node_dict.get(item)
 				if node is not None:
-					node.set_is_or =  True
+					node.is_or =  True
 
 		elif line_parts[0] == "PC":
 			line_parts[1] = (line_parts[1][:-1])
-			try:
-				sub_line_parts = line_parts[1].split(';')
-				for item in sub_line_parts:
-					parent_child = item.split(':')
-					PC[parent_child[0]] = parent_child[1].split(',')
-				for name in FeatureNames:
-					for key in PC.keys():
-						if name in PC[key]:
-							parent_node = node_dict.get(name)
-							if parent_node is not None:
-								parent_node.parent_name = key
-						child_node = node_dict.get(key)
-						if child_node is not None:
-							child_node.children = PC[key]
-			except:
-				parent_child = line_parts[1].split(':')
-				PC[parent_child[0]] = parent_child[1].split(',')
-			test_root = root(node_dict)
-			print(test_root.name,test_root.children)
 
+			sub_line_parts = line_parts[1].split(';')
+			for item in sub_line_parts:
+				parent_child = item.split(':')
+				child_names_array_= parent_child[1].split(',')
+				child_node_array = []
+				for na in child_names_array_:
+					temp = node_dict.get(na)
+					if temp:
+						temp.parent = node_dict.get(parent_child[0])
+						child_node_array.append(temp)
+				node_dict[parent_child[0]].children = child_node_array
 
+	print(product_combination(root(node_dict)))
 
