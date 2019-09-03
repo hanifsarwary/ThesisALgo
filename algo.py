@@ -2,13 +2,14 @@ from Node import Node
 import numpy as np
 import itertools
 
+
+
 def check_type(node):
 	if node.is_mendatory:
 		return 1
 	elif node.is_alternative:
 		return 2
 	elif node.is_or:
-		print("in or")
 		return 3
 	else:
 		return 4
@@ -76,12 +77,22 @@ def group_combi(group_root, PCR, solution_array,n):
 			return group_combi(group_root.children[0], check_type(group_root.children[n]), possible, 0)
 
 
-def product_combination(root):
+def product_combination(root, leaf_nodes):
 	group_products = []
 	for child in root.children:
 		group_products.append(group_combi(child, check_type(child), None, 0))
+	keys = leaf_nodes.keys()
+	index = 0
 	for t in itertools.product(*group_products):
-		print(t)
+		for tt in range(len(t)):
+			if type(t[tt]) is list or type(t[tt]) is tuple:
+				for ttt in range(0,len(t[tt])):
+					leaf_nodes[list(keys)[index]].append(t[tt][ttt])
+					index+=1
+			else:
+				leaf_nodes[list(keys)[index]].append(t[tt])
+				index+=1
+		index = 0
 
 def root(node_dict):
 	for node in node_dict.values():
@@ -98,6 +109,7 @@ with open("input.txt", "r") as file:
 	PC = dict()
 	sub_line_parts = []
 	node_dict = dict()
+
 	for line in file:
 		line_parts = line.split('->')
 		if line_parts[0] == "Feature Names":
@@ -127,7 +139,6 @@ with open("input.txt", "r") as file:
 		elif line_parts[0] == "OR":
 			line_parts[1] = (line_parts[1][:-1])
 			OR_array = line_parts[1].split(',')
-			print(OR_array)
 			for item in OR_array:
 				node = node_dict.get(item)
 				if node is not None:
@@ -147,6 +158,13 @@ with open("input.txt", "r") as file:
 						temp.parent = node_dict.get(parent_child[0])
 						child_node_array.append(temp)
 				node_dict[parent_child[0]].children = child_node_array
+	leaf_node_dict = dict()
+	for k in node_dict.keys():
+		temp_node = node_dict.get(k)
+		if temp_node.children is None:
+			key = temp_node.name
+			leaf_node_dict[key] = []
 
-	print(product_combination(root(node_dict)))
+
+	(product_combination(root(node_dict), leaf_node_dict))
 
