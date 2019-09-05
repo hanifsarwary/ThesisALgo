@@ -93,78 +93,85 @@ def product_combination(root, leaf_nodes):
 				leaf_nodes[list(keys)[index]].append(t[tt])
 				index+=1
 		index = 0
+	return leaf_nodes
 
 def root(node_dict):
 	for node in node_dict.values():
 		if node.parent == None:
 			return node
 
-with open("input.txt", "r") as file:
-	FeatureNames = []
-	Mendatory = []
-	Alternative = []
-	OR_array = []
-	inclusive = []
-	exclusive = []
-	PC = dict()
-	sub_line_parts = []
-	node_dict = dict()
 
-	for line in file:
-		line_parts = line.split('->')
-		if line_parts[0] == "Feature Names":
-			line_parts[1] = (line_parts[1][:-1])
-			FeatureNames =  line_parts[1].split(',')
-
-			for f_name in FeatureNames:
-				node_temp = Node(name=f_name)
-				node_dict[f_name] = node_temp
-
-		elif line_parts[0] == "Mendatory":
-			line_parts[1] = (line_parts[1][:-1])
-			Mendatory = line_parts[1].split(',')
-			for men in Mendatory:
-				node = node_dict.get(men)
-				if node is not None:
-					node.is_mendatory =  True
-
-		elif line_parts[0] == "Alternative":
-
-			line_parts[1] = (line_parts[1][:-1])
-			Alternative = line_parts[1].split(',')
-			for item in Alternative:
-				node = node_dict.get(item)
-				if node is not None:
-					node.is_alternative =  True
-		elif line_parts[0] == "OR":
-			line_parts[1] = (line_parts[1][:-1])
-			OR_array = line_parts[1].split(',')
-			for item in OR_array:
-				node = node_dict.get(item)
-				if node is not None:
-					node.is_or =  True
-
-		elif line_parts[0] == "PC":
-			line_parts[1] = (line_parts[1][:-1])
-
-			sub_line_parts = line_parts[1].split(';')
-			for item in sub_line_parts:
-				parent_child = item.split(':')
-				child_names_array_= parent_child[1].split(',')
-				child_node_array = []
-				for na in child_names_array_:
-					temp = node_dict.get(na)
-					if temp:
-						temp.parent = node_dict.get(parent_child[0])
-						child_node_array.append(temp)
-				node_dict[parent_child[0]].children = child_node_array
+def leaf_nodes(node_dict):
 	leaf_node_dict = dict()
 	for k in node_dict.keys():
 		temp_node = node_dict.get(k)
 		if temp_node.children is None:
 			key = temp_node.name
 			leaf_node_dict[key] = []
+	return leaf_node_dict
 
+def file_read():
+	with open("input.txt", "r") as file:
+		FeatureNames = []
+		Mendatory = []
+		Alternative = []
+		OR_array = []
+		inclusive = []
+		exclusive = []
+		PC = dict()
+		sub_line_parts = []
+		node_dict = dict()
 
-	(product_combination(root(node_dict), leaf_node_dict))
+		for line in file:
+			line_parts = line.split('->')
+			if line_parts[0] == "Feature Names":
+				line_parts[1] = (line_parts[1][:-1])
+				FeatureNames =  line_parts[1].split(',')
+
+				for f_name in FeatureNames:
+					node_temp = Node(name=f_name)
+					node_dict[f_name] = node_temp
+
+			elif line_parts[0] == "Mendatory":
+				line_parts[1] = (line_parts[1][:-1])
+				Mendatory = line_parts[1].split(',')
+				for men in Mendatory:
+					node = node_dict.get(men)
+					if node is not None:
+						node.is_mendatory =  True
+
+			elif line_parts[0] == "Alternative":
+
+				line_parts[1] = (line_parts[1][:-1])
+				Alternative = line_parts[1].split(',')
+				for item in Alternative:
+					node = node_dict.get(item)
+					if node is not None:
+						node.is_alternative =  True
+			elif line_parts[0] == "OR":
+				line_parts[1] = (line_parts[1][:-1])
+				OR_array = line_parts[1].split(',')
+				for item in OR_array:
+					node = node_dict.get(item)
+					if node is not None:
+						node.is_or =  True
+
+			elif line_parts[0] == "PC":
+				line_parts[1] = (line_parts[1][:-1])
+
+				sub_line_parts = line_parts[1].split(';')
+				for item in sub_line_parts:
+					parent_child = item.split(':')
+					child_names_array_= parent_child[1].split(',')
+					child_node_array = []
+					for na in child_names_array_:
+						temp = node_dict.get(na)
+						if temp:
+							temp.parent = node_dict.get(parent_child[0])
+							child_node_array.append(temp)
+					node_dict[parent_child[0]].children = child_node_array
+
+		return node_dict
+node_dict = file_read()
+print(product_combination(root(node_dict), leaf_nodes(node_dict)))
 
