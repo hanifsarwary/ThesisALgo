@@ -8,28 +8,28 @@ Created on Mon Sep  2 18:00:35 2019
 """
 from tkinter import *
 import tkinter.ttk as ttk
-from Node import Node
-import time
 from tkinter import messagebox
 root = Tk()
-from algo import file_read, leaf_nodes
-
-def main():
+def main_gui(leaf_nodes_names):
     item = ''
-    FeatureNames =  list(leaf_nodes(file_read()).keys())
+    FeatureNames =  leaf_nodes_names
     Inclusive= dict()
     Exclusiv= dict()
+
     def add_inclusive():
+
         def back():
             combo1.destroy()
             combo.destroy()
             inclusive_submite.destroy()
             inclusive_back.destroy()
-            main()
+            main_gui(FeatureNames)
+
         def submite_inclusive():
             inc_by = str(combo1.get())
             inc_to = str(combo.get())
             Inclusive[inc_by] = inc_to
+
         inclusive_add.destroy()
         exclusive.destroy()
         exclusive_add.destroy()
@@ -41,7 +41,7 @@ def main():
         combo1['values'] = FeatureNames
         combo1.current(0)
 
-        inclusive_  = Label(root, font=('arial',20,'bold'),text=" To " ,fg = "steel blue",bd=10,anchor='w')
+        inclusive_= Label(root, font=('arial',20,'bold'),text=" To " ,fg = "steel blue",bd=10,anchor='w')
         inclusive_.grid(row=1,column=2)
 
         combo=ttk.Combobox(root)
@@ -49,7 +49,7 @@ def main():
         combo['values'] = FeatureNames
         combo.current(0)
 
-        inclusive_submite= Button(root, command=submite_inclusive, text='Submite')
+        inclusive_submite= Button(root, command=submite_inclusive, text='Submit')
         inclusive_submite.grid(row= 2, column = 1)
 
         inclusive_back= Button(root, command=back, text='Back')
@@ -64,12 +64,9 @@ def main():
             combo.destroy()
             inclusive_submite.destroy()
             inclusive_back.destroy()
-            main()
-
-        print("delete_inclusive")
+            main_gui(FeatureNames)
 
         def inclusive_delete():
-            print("inclusive_delete")
             inc_by = str(combo1.get())
 
             if len(Inclusive) is not 0:
@@ -79,7 +76,7 @@ def main():
                     messagebox.showinfo("Error", inc_by + " not exist in Inclusive")
             else:
                 messagebox.showinfo("Error", "No Item in Inclusive")
-            messagebox.destroy()
+            # messagebox.destroy()
             delete_inclusive()
         inclusive_label  = Label(root, font=('arial',20,'bold'),text=" Delete Inclusive :" ,fg = "steel blue",bd=10,anchor='w')
         inclusive_label.grid(row=1,column=0)
@@ -117,7 +114,7 @@ def main():
             exclusiv_submite.destroy()
             exclusiv_back.destroy()
             exclusive_label.destroy()
-            main()
+            main_gui(FeatureNames)
         def submite_exclusiv():
             inc_by = str(combo1.get())
             inc_to = str(combo.get())
@@ -150,11 +147,6 @@ def main():
         exclusiv_back= Button(root, command=back, text='Back')
         exclusiv_back.grid(row= 2, column = 2)
 
-
-
-
-
-
     def delete_exclusive():
         print("delete_exclusive")
         def back1():
@@ -165,9 +157,7 @@ def main():
             combo.destroy()
             exclusive_submite.destroy()
             exclusive_back.destroy()
-            main()
-
-        print("delete_inclusive")
+            main_gui(FeatureNames)
 
         def inclusive_delete():
             print("inclusive_delete")
@@ -237,4 +227,6 @@ def main():
 
 
     root.mainloop()
-main()
+    print('now i am here')
+    return {'inclusive':Inclusive,'exclusive':Exclusiv}
+

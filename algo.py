@@ -1,7 +1,7 @@
 from Node import Node
 import numpy as np
 import itertools
-
+from GUI import main_gui
 
 
 def check_type(node):
@@ -172,6 +172,12 @@ def file_read():
 					node_dict[parent_child[0]].children = child_node_array
 
 		return node_dict
-node_dict = file_read()
-print(product_combination(root(node_dict), leaf_nodes(node_dict)))
 
+
+def get_combination():
+	node_dict = file_read()
+
+	main_gui(list(leaf_nodes(node_dict).keys()))
+	return product_combination(root(node_dict), leaf_nodes(node_dict))
+
+get_combination()
