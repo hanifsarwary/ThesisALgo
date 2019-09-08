@@ -172,12 +172,48 @@ def file_read():
 					node_dict[parent_child[0]].children = child_node_array
 
 		return node_dict
+def remove_combinations_from_dict(combinations,index_array):
+	turn = 0
+	for i in index_array:
+		for k in combinations.keys():
+			del combinations.get(k)[i-turn]
 
+		turn += 1
+	return combinations
 
 def get_combination():
 	node_dict = file_read()
 
-	main_gui(list(leaf_nodes(node_dict).keys()))
-	return product_combination(root(node_dict), leaf_nodes(node_dict))
+	inclusive_exclusive_dict = main_gui(list(leaf_nodes(node_dict).keys()))
+	total_combinations =  product_combination(root(node_dict), leaf_nodes(node_dict))
+	to_remove_index_list = []
+	for k in inclusive_exclusive_dict.get('inclusive').keys():
+		inclusive_to = inclusive_exclusive_dict.get('inclusive').get(k)
+		count=0
+		combo=total_combinations.get(k)
+		combo1 = total_combinations.get(inclusive_to)
+		for i in range(len(combo)):
+			if combo[i] is 1 and combo1[i] is 0:
+				to_remove_index_list.append(count)
+			count += 1
 
-get_combination()
+	total_combinations_after_inclusive = remove_combinations_from_dict(total_combinations,to_remove_index_list)
+	to_remove_index_list_exclusive = []
+	for k in inclusive_exclusive_dict.get('exclusive').keys():
+		exclusive_to = inclusive_exclusive_dict.get('exclusive').get(k)
+		count = 0
+		combo = total_combinations_after_inclusive.get(k)
+		combo1 = total_combinations_after_inclusive.get(exclusive_to)
+
+		for i in range(len(combo)):
+			if combo[i] is 1 and combo1[i] is 1:
+				to_remove_index_list_exclusive.append(count)
+			count += 1
+
+	total_combinations_after_exclusive = remove_combinations_from_dict(
+		total_combinations_after_inclusive, to_remove_index_list_exclusive)
+	return total_combinations_after_exclusive
+
+
+result = get_combination()
+print(result)

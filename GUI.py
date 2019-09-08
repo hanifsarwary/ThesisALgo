@@ -10,11 +10,12 @@ from tkinter import *
 import tkinter.ttk as ttk
 from tkinter import messagebox
 root = Tk()
+Inclusive = dict()
+Exclusiv = dict()
 def main_gui(leaf_nodes_names):
     item = ''
     FeatureNames =  leaf_nodes_names
-    Inclusive= dict()
-    Exclusiv= dict()
+
 
     def add_inclusive():
 
@@ -119,7 +120,7 @@ def main_gui(leaf_nodes_names):
             inc_by = str(combo1.get())
             inc_to = str(combo.get())
             Exclusiv[inc_by] = inc_to
-        print("in add")
+
         inclusive_add.destroy()
         inclusive.destroy()
         exclusive_add.destroy()
@@ -148,9 +149,9 @@ def main_gui(leaf_nodes_names):
         exclusiv_back.grid(row= 2, column = 2)
 
     def delete_exclusive():
-        print("delete_exclusive")
+
         def back1():
-            print("back1")
+
             exclusive_label.destroy()
             combo1.destroy()
             exclusive_.destroy()
@@ -160,7 +161,7 @@ def main_gui(leaf_nodes_names):
             main_gui(FeatureNames)
 
         def inclusive_delete():
-            print("inclusive_delete")
+
             inc_by = str(combo1.get())
             #inc_to = str(combo.get())
             if len(Exclusiv) is not 0:
@@ -227,6 +228,5 @@ def main_gui(leaf_nodes_names):
 
 
     root.mainloop()
-    print('now i am here')
     return {'inclusive':Inclusive,'exclusive':Exclusiv}
 
