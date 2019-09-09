@@ -2,7 +2,7 @@ from Node import Node
 import numpy as np
 import itertools
 from GUI import main_gui
-
+import xlwt as excel
 
 def check_type(node):
 	if node.is_mendatory:
@@ -216,4 +216,18 @@ def get_combination():
 
 
 result = get_combination()
-print(result)
+if result is not None:
+	file = excel.Workbook()
+	sheet = file.add_sheet('output',True)
+	column = 1
+	row = 1
+	for k in result.keys():
+
+		sheet.write(0,column,k)
+
+		for element in result.get(k):
+			sheet.write(row, column, element)
+			row+=1
+		row = 1
+		column += 1
+	file.save('output.xlsx')
